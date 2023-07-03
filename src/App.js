@@ -284,6 +284,7 @@ function Movie({ movie, onSelectMovie }) {
 function MoviesDetails({ selectedId, onCloseMovie, onAddWatched }) {
   const [movie, setMovie] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [userRating, setUserRating] = useState("");
 
   const {
     Title: title,
@@ -300,12 +301,17 @@ function MoviesDetails({ selectedId, onCloseMovie, onAddWatched }) {
 
   function handleAdd() {
     const newWatchedMovie = {
-      imdbRating: selectedId,
+      imdbID: selectedId,
       title,
       year,
       poster,
+      imdbRating: +imdbRating,
+      runtime: runtime.split(" ").at(0),
+      userRating,
     };
+
     onAddWatched(newWatchedMovie);
+    onCloseMovie();
   }
 
   /* 
@@ -371,11 +377,17 @@ function MoviesDetails({ selectedId, onCloseMovie, onAddWatched }) {
           </header>
           <section>
             <div className="rating">
-              <StarRating maxRating={10} size={24} />
+              <StarRating
+                maxRating={10}
+                size={24}
+                onSetRating={setUserRating}
+              />
 
-              <button className="btn-add" onClick={handleAdd}>
-                Add to list
-              </button>
+              {userRating > 0 && (
+                <button className="btn-add" onClick={handleAdd}>
+                  Add to list
+                </button>
+              )}
             </div>
             <p>
               <em>{plot}</em>
@@ -391,7 +403,9 @@ function MoviesDetails({ selectedId, onCloseMovie, onAddWatched }) {
 
 function WatchedSummary({ watched }) {
   const avgImdbRating = average(watched.map((movie) => movie.imdbRating));
-  const avgUserRating = average(watched.map((movie) => movie.userRating));
+  const avgUserRating = average(
+    watched.map((movie) => Math.floor(movie.userRating))
+  );
   const avgRuntime = average(watched.map((movie) => movie.runtime));
 
   return (
@@ -432,8 +446,8 @@ function WatchedMoviesList({ watched }) {
 function WatchedMovie({ movie }) {
   return (
     <li key={movie.imdbID}>
-      <img src={movie.Poster} alt={`${movie.Title} poster`} />
-      <h3>{movie.Title}</h3>
+      <img src={movie.poster} alt={`${movie.Title} poster`} />
+      <h3>{movie.title}</h3>
       <div>
         <p>
           <span>⭐️</span>
