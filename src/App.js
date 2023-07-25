@@ -61,7 +61,7 @@ export default function App() {
   const [error, setError] = useState("");
   const [selectedId, setSelectedId] = useState(null);
 
-  const tempQuery = "matrix";
+  // const tempQuery = "matrix";
 
   /*
   useEffect(function () {
@@ -97,6 +97,15 @@ export default function App() {
   function handleDeleteWatched(id) {
     setWatched((watched) => watched.filter((movie) => movie.imdbID !== id));
   }
+
+  // Close movie with escape key
+  useEffect(function () {
+    document.addEventListener("keydown", function (e) {
+      if (e.code === "Escape") {
+        handleCloseMovie();
+      }
+    });
+  }, []);
 
   useEffect(
     function () {
