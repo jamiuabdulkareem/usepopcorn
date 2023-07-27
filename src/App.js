@@ -98,15 +98,6 @@ export default function App() {
     setWatched((watched) => watched.filter((movie) => movie.imdbID !== id));
   }
 
-  // Close movie with escape key
-  useEffect(function () {
-    document.addEventListener("keydown", function (e) {
-      if (e.code === "Escape") {
-        handleCloseMovie();
-      }
-    });
-  }, []);
-
   useEffect(
     function () {
       const controller = new AbortController();
@@ -144,6 +135,7 @@ export default function App() {
         return;
       }
 
+      handleCloseMovie();
       fetchMovies();
 
       return function () {
@@ -368,6 +360,25 @@ function MoviesDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
           setIsLoading(false);
         }
    */
+
+  // Close movie with escape key
+  useEffect(
+    function () {
+      function callback(e) {
+        if (e.code === "Escape") {
+          onCloseMovie();
+        }
+      }
+
+      document.addEventListener("keydown", callback);
+
+      // Clean event
+      return function () {
+        document.removeEventListener("keydown", callback);
+      };
+    },
+    [onCloseMovie]
+  );
 
   useEffect(
     function () {
